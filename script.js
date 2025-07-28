@@ -1,3 +1,28 @@
+
+function showOrderSuccessView(message) {
+    checkoutTitleMain.textContent = '¡Pedido Registrado!';
+    checkoutFormView.style.display = 'none';
+    checkoutSuccessView.style.display = 'block';
+
+    const copyBtn = document.getElementById('copy-order-btn');
+    const openWhatsAppBtn = document.getElementById('open-whatsapp-btn');
+
+    copyBtn.onclick = () => {
+        navigator.clipboard.writeText(message).then(() => {
+            checkoutStep1.style.display = 'none';
+            checkoutStep2.style.display = 'block';
+        }).catch(err => {
+            console.error('Error al copiar mensaje:', err);
+        });
+    };
+
+    openWhatsAppBtn.onclick = () => {
+        const phone = "57XXXXXXXXXX"; // Reemplaza con tu número real
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    };
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
     // --- LÓGICA DEL MENÚ DE NAVEGACIÓN, BÚSQUEDA Y OVERLAY (Elementos) ---
     const menuToggle = document.getElementById('menu-toggle');
@@ -298,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 paymentMethod: paymentMethod
             };
 
-            const appsScriptUrl = "https://script.google.com/macros/s/AKfycbx6JHSVj1sX4S2H8c7wSWfqDnjRBPyrq5eBijT-MYsN5RdhTP3aBYy0M8HyWYkU6dU0/exec"; 
+            const appsScriptUrl = "https://script.google.com/macros/s/AKfycbx2uHsSvboVXH1XyGlF8VesagHU7LnLMdeBXpcrMsLaEtnlTgsNGQW0TQsgmmIHY-ZJ/exec"; 
             
             fetch(appsScriptUrl, {
                 method: 'POST',
