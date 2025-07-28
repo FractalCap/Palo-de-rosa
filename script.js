@@ -1,28 +1,3 @@
-
-function showOrderSuccessView(message) {
-    checkoutTitleMain.textContent = '¡Pedido Registrado!';
-    checkoutFormView.style.display = 'none';
-    checkoutSuccessView.style.display = 'block';
-
-    const copyBtn = document.getElementById('copy-order-btn');
-    const openWhatsAppBtn = document.getElementById('open-whatsapp-btn');
-
-    copyBtn.onclick = () => {
-        navigator.clipboard.writeText(message).then(() => {
-            checkoutStep1.style.display = 'none';
-            checkoutStep2.style.display = 'block';
-        }).catch(err => {
-            console.error('Error al copiar mensaje:', err);
-        });
-    };
-
-    openWhatsAppBtn.onclick = () => {
-        const phone = "57XXXXXXXXXX"; // Reemplaza con tu número real
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
-    };
-}
-
-
 document.addEventListener('DOMContentLoaded', function() {
     // --- LÓGICA DEL MENÚ DE NAVEGACIÓN, BÚSQUEDA Y OVERLAY (Elementos) ---
     const menuToggle = document.getElementById('menu-toggle');
@@ -92,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const paymentButtons = checkoutFormView.querySelectorAll('.payment-btn');
                 paymentButtons.forEach(button => {
                     button.disabled = false;
-                    button.textContent = button.dataset.method === 'Contraentrega' ? 'Pagar Contraentrega' : `Pagar con ${button.dataset.method}`;
+                    button.textContent = `Pagar con ${button.dataset.method}`;
                 });
             }, 300);
         }
@@ -288,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
        if(productId) updateCart();
     });
 
-    // --- LÓGICA DE GOOGLE SHEETS Y WHATSAPP (SOLUCIÓN ACTUALIZADA) ---
+    // --- LÓGICA DE GOOGLE SHEETS Y WHATSAPP (SOLUCIÓN SECUENCIAL DE 2 PASOS) ---
     const paymentButtons = checkoutFormView.querySelectorAll('.payment-btn');
     paymentButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -327,70 +302,45 @@ document.addEventListener('DOMContentLoaded', function() {
             
             fetch(appsScriptUrl, {
                 method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(orderData)
+                mode: 'no-cors',
+                body: JSON.stringify(orderData),
+                headers: { 'Content-Type': 'application/json' }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error del servidor: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.result === 'success') {
-                    let fullWhatsappMessage = `¡Hola Palo de Rosa! 🌸
+            .then(() => {
+                let fullWhatsappMessage = `¡Hola Palo de Rosa! 🌸\n\nQuisiera confirmar mi pedido con ID *${orderId}*:\n\n`;
+                fullWhatsappMessage += `*PRODUCTOS:*\n`;
+                cart.forEach(item => {
+                    fullWhatsappMessage += `- ${item.name} (x${item.quantity}) - ${formatPrice(item.display_price)} c/u\n`;
+                });
+                fullWhatsappMessage += `\n*SUBTOTAL: ${formatPrice(subtotal)}*\n\n`;
+                fullWhatsappMessage += `*MI DIRECCIÓN DE ENVÍO:*\n${shippingAddress}\n\n`;
+                fullWhatsappMessage += `*MI MÉTODO DE PAGO:* ${paymentMethod}\n\n`;
+                fullWhatsappMessage += `¡Quedo atento/a, gracias!`;
+                
+                checkoutTitleMain.textContent = '¡Pedido Registrado!';
+                checkoutFormView.style.display = 'none';
+                checkoutSuccessView.style.display = 'block';
 
-Quisiera confirmar mi pedido con ID *${orderId}*:
+                const copyBtn = document.getElementById('copy-order-btn');
+                const openWhatsAppBtn = document.getElementById('open-whatsapp-btn');
 
-`;
-                    fullWhatsappMessage += `*PRODUCTOS:*
-`;
-                    cart.forEach(item => {
-                        fullWhatsappMessage += `- ${item.name} (x${item.quantity}) - ${formatPrice(item.display_price)} c/u
-`;
+                copyBtn.onclick = () => {
+                    navigator.clipboard.writeText(fullWhatsappMessage).then(() => {
+                        checkoutStep1.style.display = 'none';
+                        checkoutStep2.style.display = 'block';
+                    }).catch(err => {
+                        console.error('Error al copiar el mensaje: ', err);
+                        alert('Error al copiar. Por favor, intenta de nuevo.');
                     });
-                    fullWhatsappMessage += `
-*SUBTOTAL: ${formatPrice(subtotal)}*
+                };
+                
+                openWhatsAppBtn.onclick = () => {
+                    setTimeout(closeCheckoutModal, 500);
+                };
+                
+                cart = [];
+                updateCart();
 
-`;
-                    fullWhatsappMessage += `*MI DIRECCIÓN DE ENVÍO:*
-${shippingAddress}
-
-`;
-                    fullWhatsappMessage += `*MI MÉTODO DE PAGO:* ${paymentMethod}
-
-`;
-                    fullWhatsappMessage += `¡Quedo atento/a, gracias!`;
-
-                    checkoutTitleMain.textContent = '¡Pedido Registrado!';
-                    checkoutFormView.style.display = 'none';
-                    checkoutSuccessView.style.display = 'block';
-
-                    const copyBtn = document.getElementById('copy-order-btn');
-                    const openWhatsAppBtn = document.getElementById('open-whatsapp-btn');
-
-                    copyBtn.onclick = () => {
-                        navigator.clipboard.writeText(fullWhatsappMessage).then(() => {
-                            checkoutStep1.style.display = 'none';
-                            checkoutStep2.style.display = 'block';
-                        }).catch(err => {
-                            console.error('Error al copiar el mensaje: ', err);
-                            alert('Error al copiar. Por favor, intenta de nuevo.');
-                        });
-                    };
-
-                    openWhatsAppBtn.onclick = () => {
-                        setTimeout(closeCheckoutModal, 500);
-                    };
-
-                    cart = [];
-                    updateCart();
-                } else {
-                    throw new Error(data.message || 'El servidor devolvió un error inesperado.');
-                }
             })
             .catch(error => {
                 console.error('Error al procesar el pedido:', error);
