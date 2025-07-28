@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 paymentMethod: paymentMethod
             };
 
-            const appsScriptUrl = "https://script.google.com/macros/s/AKfycbx9dmEvlJBbPlvXxuKz9MiR7Q5pPWI9smc7adIpNxqhieDrFTvxKg7ZhF06BnV7pmje/exec"; 
+            const appsScriptUrl = "https://script.google.com/macros/s/AKfycbwabt8ZVx3EkD54Y_DCsyNGjuFxFPITo2lhB-X6HGi9cZLfspib7_gtAUa4JU6xRGE/exec"; 
             
             fetch(appsScriptUrl, {
                 method: 'POST',
