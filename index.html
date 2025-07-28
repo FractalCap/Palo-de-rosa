@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palo de Rosa by Daniela Giraldo</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .product-card { display: flex; flex-direction: column; text-decoration: none; }
+        .product-price { font-size: 0.9rem; font-weight: 500; color: var(--text-light); margin: 0.5rem 0; text-align: center; }
+        .add-to-cart-btn { margin-top: auto; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 5px; font-size: 0.8rem; font-weight: 500; background-color: transparent; cursor: pointer; transition: all 0.3s ease; }
+        .add-to-cart-btn:hover { background-color: var(--accent-pink); color: var(--white); border-color: var(--accent-pink); }
+        .product-card .category-title { text-decoration: none; }
+        .product-card a { text-decoration: none; }
+
+        .terms-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1400;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .terms-modal.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .terms-modal-content {
+            background-color: var(--white);
+            padding: 2.5rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .terms-modal.visible .terms-modal-content {
+            transform: translateY(0);
+        }
+
+        .terms-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 0.5rem;
+            color: var(--text-light);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .terms-close-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .terms-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin: 0 0 1.5rem 0;
+            text-align: center;
+        }
+
+        .terms-text-container {
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-light);
+        }
+        .terms-text-container h4 {
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .checkout-success-view {
+            text-align: center;
+            padding: 0.5rem 0;
+        }
+        .step-box {
+            background-color: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .step-box p {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin: 0 0 1rem 0;
+        }
+        .step-box strong {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        .highlight-text {
+            background-color: #FFFDE7;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .checkout-success-view .payment-btn {
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="search-overlay" id="search-overlay">
+        <button class="search-close-btn" id="search-close-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="search-container">
+            <form id="search-form">
+                <input type="text" id="search-input" class="search-input" placeholder="¿Qué estás buscando? (ej. Parka, Chaleco...)">
+                <button type="submit" class="search-submit-btn">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+    <nav class="main-nav" id="main-nav">
+        <div class="nav-header">
+            <button class="nav-close-btn" id="nav-close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                Cerrar
+            </button>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html#new-arrivals">Novedades</a></li>
+            <li class="has-submenu">
+                <a href="#">Chaquetas y Rompevientos</a>
+                <ul class="nav-submenu">
+                    <li><a href="product.html?id=chaquetas-impermeables">Chaquetas Impermeables</a></li>
+                    <li><a href="product.html?id=rompevientos-impermeable">Rompevientos Impermeable</a></li>
+                    <li><a href="product.html?id=rompevientos-bicolor">Rompevientos Bicolor</a></li>
+                    <li><a href="product.html?id=rompevientos-cargo">Rompevientos Cargo</a></li>
+                    <li><a href="product.html?id=chaqueta-ovejera-encanto">Chaqueta Ovejera Encanto</a></li>
+                    <li><a href="product.html?id=chaqueta-terciopelo">Chaqueta de Terciopelo</a></li>
+                    <li><a href="product.html?id=chaqueta-vaquita">Chaqueta Vaquita</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Chalecos y Parkas</a>
+                <ul class="nav-submenu">
+                    <li><a href="product.html?id=chalecos-impermeables">Chalecos Impermeables</a></li>
+                    <li><a href="product.html?id=chalecos-cuerina">Chalecos de Cuerina</a></li>
+                    <li><a href="product.html?id=parka-corta-doble-faz">Parka Corta Doble Faz</a></li>
+                    <li><a href="product.html?id=parkas-importadas">Parkas Importadas</a></li>
+                    <li><a href="product.html?id=parka-corta">Parka Corta</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Bompers y Cazadoras</a>
+                <ul class="nav-submenu">
+                    <li><a href="product.html?id=bomper-con-capucha">Bomper con Capucha</a></li>
+                    <li><a href="product.html?id=bomper">Bomper</a></li>
+                    <li><a href="product.html?id=cazadora">Cazadora</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Prendas de Tela</a>
+                <ul class="nav-submenu">
+                     <li><a href="product.html?id=buzos-lana">Buzos de Lana</a></li>
+                     <li><a href="product.html?id=peluche">Peluche</a></li>
+                </ul>
+            </li>
+            <li><a href="index.html#category-showcase">Colecciones Especiales</a></li>
+            <li><a href="index.html#nuestra-marca">La Marca Palo de Rosa</a></li>
+        </ul>
+    </nav>
+
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3 class="cart-title">Mi Carrito</h3>
+            <button class="cart-close-btn" id="cart-close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="cart-items-container" id="cart-items-container">
+            <p class="cart-empty-msg">Tu carrito está vacío.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-subtotal">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal-price">$0</span>
+            </div>
+            <button class="btn-checkout" id="btn-checkout">Finalizar Compra</button>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="checkout-modal" id="checkout-modal">
+        <div class="checkout-modal-content">
+            <button class="checkout-close-btn" id="checkout-close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h2 class="checkout-title" id="checkout-title-main">Completa tu pedido</h2>
+            
+            <div class="checkout-form" id="checkout-form-view">
+                <label for="customer-name">Nombre Completo:</label>
+                <input type="text" id="customer-name" placeholder="Ej: Daniela Giraldo">
+                
+                <label for="customer-phone">Número de WhatsApp:</label>
+                <input type="tel" id="customer-phone" placeholder="Ej: 3213946028">
+
+                <label for="shipping-address">Dirección de Envío Completa:</label>
+                <input type="text" id="shipping-address" placeholder="Ej: Carrera 10 #20-30, Apto 501, Bogotá">
+                
+                <p class="address-error-msg" id="address-error">Por favor, completa todos los campos.</p>
+
+                <div class="payment-options">
+                    <button class="payment-btn" data-method="Nequi">Pagar con Nequi</button>
+                    <button class="payment-btn" data-method="PSE">Pagar con PSE</button>
+                    <button class="payment-btn" data-method="Daviplata">Pagar con Daviplata</button>
+                    <button class="payment-btn" data-method="Contraentrega">Pagar Contraentrega</button>
+                </div>
+            </div>
+
+            <div class="checkout-success-view" id="checkout-success-view" style="display: none;">
+                
+                <div id="checkout-step-1" class="step-box">
+                    <p><strong>Paso 1 de 2:</strong><br>Copia el resumen de tu pedido para tenerlo listo.</p>
+                    <button id="copy-order-btn" class="payment-btn">Copiar Resumen del Pedido</button>
+                </div>
+                
+                <div id="checkout-step-2" class="step-box" style="display: none;">
+                     <p><strong>Paso 2 de 2:</strong><br>¡Texto copiado! Para finalizar, <span class="highlight-text">debes pegar el texto en el chat</span> de WhatsApp y enviarlo.</p>
+                    <a href="https://wa.me/573213946028" target="_blank" id="open-whatsapp-btn" class="payment-btn">Abrir WhatsApp para Confirmar</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="terms-modal" id="terms-modal">
+        <div class="terms-modal-content">
+            <button class="terms-close-btn" id="terms-close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h2 class="terms-title">Términos y Condiciones</h2>
+            <div class="terms-text-container">
+                <p><strong>Última actualización:</strong> 27 de Julio, 2025</p>
+                <p>Bienvenido a Palo de Rosa. Al realizar un pedido a través de nuestro sitio web o canal de WhatsApp, aceptas los siguientes términos y condiciones.</p>
+
+                <h4>1. Pedidos y Pagos</h4>
+                <p>Todos los pedidos se gestionan a través de WhatsApp. Te contactaremos para confirmar los detalles, el total y coordinar el pago. Aceptamos Nequi, PSE, Daviplata y pago contraentrega (sujeto a cobertura).</p>
+
+                <h4>2. Envíos</h4>
+                <p>Realizamos envíos a nivel nacional en Colombia. El costo y tiempo de entrega varían según la ubicación y serán comunicados durante la confirmación del pedido. No nos hacemos responsables por retrasos causados por la empresa transportadora.</p>
+
+                <h4>3. Devoluciones y Cambios</h4>
+                <p>Solo se aceptan cambios por defectos de fábrica reportados dentro de los 3 días posteriores a la recepción del producto. La prenda no debe haber sido usada y debe conservar sus etiquetas originales. No se realizan devoluciones de dinero. Para iniciar un proceso de cambio, por favor contáctanos por WhatsApp.</p>
+
+                <h4>4. Productos</h4>
+                <p>Los colores de las prendas pueden variar ligeramente debido a la iluminación de las fotografías y la calibración de las pantallas. Las descripciones de los productos buscan ser lo más precisas posible.</p>
+
+                <h4>5. Privacidad</h4>
+                <p>Tus datos personales, como nombre y dirección, se utilizarán únicamente para procesar y enviar tu pedido. No compartiremos tu información con terceros.</p>
+            </div>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="header-icon-btn" id="menu-toggle" aria-label="Abrir menú">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
+                    <span>Menú</span>
+                </button>
+                <a href="#" class="header-icon-btn" id="search-open-btn" aria-label="Buscar productos">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <span>Buscar</span>
+                </a>
+            </div>
+
+            <div class="header-center">
+                <a href="#home" class="logo-link">
+                    <h1>Palo de Rosa</h1>
+                    <img src="logo.png" alt="Logo Palo de Rosa" class="header-logo-img" onerror="this.style.display='none'">
+                </a>
+            </div>
+
+            <div class="header-right">
+                <a href="https://wa.me/573213946028" target="_blank" class="header-action-link">Contáctenos</a>
+                <a href="#" class="header-icon-btn icon-only" aria-label="Ver lista de deseos">
+                     <svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+                </a>
+                <a href="#" class="header-icon-btn icon-only" id="cart-toggle" aria-label="Ver carrito de compras">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18"></path><path d="M16 10a4 4 0 01-8 0"></path></svg>
+                    <span class="cart-item-count" id="cart-item-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+       <section class="hero-section" id="home">
+            <div class="hero-background">
+                <div class="hero-bg-item left-image">
+                    <img src="WhatsApp Image 2025-07-25 at 4.01.05 PM.jpeg" alt="Modelo luciendo prenda de Palo de Rosa">
+                </div>
+                <div class="hero-bg-item center-video">
+                    <video src="WhatsApp Video 2025-07-25 at 4.01.05 PM.mp4" autoplay loop muted playsinline></video>
+                </div>
+                <div class="hero-bg-item right-image">
+                    <img src="5654c873-d3c8-4718-88be-6ec865e4ce30.jpg" alt="Detalle de textura de tela">
+                </div>
+            </div>
+            <div class="hero-content">
+                <span class="hero-subtitle">Prendas Importadas de Alta Calidad</span>
+                <h2 class="searchable-content">Moda, Comfort y Funcionalidad</h2>
+                <a href="#new-arrivals" class="hero-cta">Descubrir los Últimos Productos</a>
+            </div>
+        </section>
+
+        <section class="category-showcase" id="category-showcase">
+            <h2 class="section-title searchable-content">Explora nuestras Colecciones</h2>
+            <div class="category-grid">
+                <a href="product.html?id=chaquetas-impermeables" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-26 145927.png" alt="Chaquetas Impermeables">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Chaquetas Impermeables</h3>
+                </a>
+                <a href="product.html?id=rompevientos-impermeable" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-26 150211.png" alt="Rompevientos Impermeable">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Rompevientos Impermeable</h3>
+                </a>
+                <a href="product.html?id=rompevientos-bicolor" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-26 150257.png" alt="Rompevientos Bicolor">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Rompevientos Bicolor</h3>
+                </a>
+                <a href="product.html?id=rompevientos-cargo" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-26 150406.png" alt="Rompevientos Cargo">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Rompevientos Cargo</h3>
+                </a>
+                <a href="product.html?id=chalecos-impermeables" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-26 150458.png" alt="Chalecos impermeables">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Chalecos impermeables</h3>
+                </a>
+                
+                <a href="product.html?id=parka-corta" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-27 004143.png" alt="Parka Corta">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Parka Corta</h3>
+                </a>
+                <a href="product.html?id=bomper-con-capucha" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-27 004221.png" alt="Bomper con capucha">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Bomper con capucha</h3>
+                </a>
+                <a href="product.html?id=bomper" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-27 004306.png" alt="Bomper">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Bomper</h3>
+                </a>
+                <a href="product.html?id=chaqueta-ovejera-encanto" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-27 004331.png" alt="Chaqueta ovejera encanto">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Chaqueta ovejera encanto</h3>
+                </a>
+                
+                <a href="product.html?id=chalecos-cuerina" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-26 150541.png" alt="Chalecos cuerina">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Chalecos cuerina</h3>
+                </a>
+                <a href="product.html?id=parka-corta-doble-faz" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-26 150610.png" alt="Parka Corta Doble Faz">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Parka Corta Doble Faz</h3>
+                </a>
+                <a href="product.html?id=parkas-importadas" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-26 150646.png" alt="Parkas Importadas">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Parkas Importadas</h3>
+                </a>
+
+                <a href="product.html?id=peluche" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-27 004407.png" alt="Peluche">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Peluche</h3>
+                </a>
+                <a href="product.html?id=cazadora" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-27 004427.png" alt="Cazadora">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Cazadora</h3>
+                </a>
+                <a href="product.html?id=chaqueta-terciopelo" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-27 004457.png" alt="Chaqueta de Terciopelo">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Chaqueta de Terciopelo</h3>
+                </a>
+                <a href="product.html?id=chaqueta-vaquita" class="category-card">
+                    <div class="category-image">
+                        <img src="Captura de pantalla 2025-07-27 004104.png" alt="Chaqueta Vaquita">
+                        <div class="category-overlay">
+                            <span class="view-product-btn">Ver Producto</span>
+                        </div>
+                    </div>
+                    <h3 class="category-title searchable-content">Chaqueta Vaquita</h3>
+                </a>
+
+            </div>
+        </section>
+
+        <section class="video-section">
+            <h2 class="section-title searchable-content">Hecho para Cualquier Situacion</h2>
+            <div class="video-container">
+                <video id="showcase-video" class="showcase-video-element" autoplay loop muted playsinline>
+                    <source src="video.mp4" type="video/mp4">
+                    Tu navegador no soporta la etiqueta de video.
+                </video>
+                <div class="video-overlay"></div>
+                <div class="video-controls">
+                    <button id="play-pause-btn" class="video-control-btn" aria-label="Reproducir o pausar video">
+                        <svg class="icon-play" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        <svg class="icon-pause" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="new-arrivals-section" id="new-arrivals">
+            <h2 class="section-title searchable-content">Nuestros Productos más Novedosos</h2>
+            <div class="product-grid" id="product-list">
+                
+                <div class="product-card" data-id="parkas-importadas" data-name="Parkas Importadas" data-price="260000" data-image="Captura de pantalla 2025-07-26 150646.png">
+                    <a href="product.html?id=parkas-importadas">
+                        <div class="category-image">
+                            <img src="Captura de pantalla 2025-07-26 150646.png" alt="Parkas Importadas">
+                        </div>
+                        <h3 class="category-title searchable-content">Parkas Importadas</h3>
+                    </a>
+                </div>
+
+                <div class="product-card" data-id="parka-corta-doble-faz" data-name="Parka Corta Doble Faz" data-price="245000" data-image="Captura de pantalla 2025-07-26 150610.png">
+                    <a href="product.html?id=parka-corta-doble-faz">
+                        <div class="category-image">
+                            <img src="Captura de pantalla 2025-07-26 150610.png" alt="Parka Corta Doble Faz">
+                        </div>
+                        <h3 class="category-title searchable-content">Parka Corta Doble Faz</h3>
+                    </a>
+                </div>
+
+                <div class="product-card" data-id="buzos-lana" data-name="Buzos de Lana" data-price="85000" data-image="buzo-lana-preview.jpg">
+                    <a href="product.html?id=buzos-lana">
+                        <div class="category-image">
+                            <img src="WhatsApp Image 2025-07-25 at 4.01.05 PM.jpeg" alt="Buzos de Lana">
+                        </div>
+                        <h3 class="category-title searchable-content">Buzos de Lana</h3>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="mission-section" id="nuestra-marca">
+            <h2 class="section-title searchable-content">Nuestra Misión</h2>
+            <div class="mission-box">
+                <p>"Nuestra misión es vestir a nuestros clientes con prendas de alta calidad que reflejen su personalidad y estilo único. Nos esforzamos por ofrecer productos que combinan moda, comfort y funcionalidad, asegurando siempre una experiencia de compra excepcional."</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Ayuda</h4>
+                <ul>
+                    <li><a href="https://wa.me/573213946028" target="_blank">Preguntas Frecuentes</a></li>
+                    <li><a href="https://wa.me/573213946028" target="_blank">Envíos y Devoluciones</a></li>
+                    <li><a href="#" id="terms-link">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>La Marca</h4>
+                <ul>
+                    <li><a href="#nuestra-marca">Nuestra Historia</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <ul>
+                    <li><a href="tel:+573213946028" class="footer-contact-link">(57) 321 3946028</a></li>
+                    <li>Calle 59c sur 88c 56, Almacén</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Palo de Rosa by Daniela Giraldo. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const termsModal = document.getElementById('terms-modal');
+        const termsLink = document.getElementById('terms-link');
+        const termsCloseBtn = document.getElementById('terms-close-btn');
+
+        const openTermsModal = (e) => {
+            e.preventDefault();
+            termsModal.classList.add('visible');
+        };
+
+        const closeTermsModal = () => {
+            termsModal.classList.remove('visible');
+        };
+
+        if (termsLink) {
+            termsLink.addEventListener('click', openTermsModal);
+        }
+
+        if (termsCloseBtn) {
+            termsCloseBtn.addEventListener('click', closeTermsModal);
+        }
+
+        if (termsModal) {
+            termsModal.addEventListener('click', (e) => {
+                if (e.target === termsModal) {
+                    closeTermsModal();
+                }
+            });
+        }
+        
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && termsModal.classList.contains('visible')) {
+                closeTermsModal();
+            }
+        });
+    });
+    </script>
+</body>
+</html>

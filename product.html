@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Producto - Palo de Rosa by Daniela Giraldo</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .product-page-main {
+            padding: 4rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .product-detail-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.2fr;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        .product-image-container img,
+        .product-image-container video {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+        }
+        .product-info-column h1 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        .price-container {
+            margin-bottom: 2rem;
+        }
+        .product-page-price {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin: 0.5rem 0;
+        }
+        .price-glow {
+            color: var(--text-dark);
+            text-shadow: 0 0 12px rgba(255, 182, 193, 0.9);
+        }
+        .product-page-price-wholesale {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--text-light);
+        }
+        .product-description {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        .color-selector {
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .color-selector h4 {
+            margin: 0 0 1rem 0;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dark);
+        }
+        .color-swatches {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        .swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            box-shadow: 0 0 0 1px var(--border-color) inset;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .swatch:hover {
+            transform: scale(1.1);
+        }
+        .swatch.active {
+            box-shadow: 0 0 0 2px var(--white), 0 0 0 4px var(--text-dark);
+        }
+        .terms-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1400;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .terms-modal.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .terms-modal-content {
+            background-color: var(--white);
+            padding: 2.5rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .terms-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 0.5rem;
+            color: var(--text-light);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .terms-close-btn:hover { color: var(--text-dark); }
+        .terms-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0 0 1.5rem 0; text-align: center; }
+        .terms-text-container { font-family: 'Roboto', sans-serif; font-size: 0.9rem; line-height: 1.6; color: var(--text-light); }
+        .terms-text-container h4 { font-weight: 500; color: var(--text-dark); margin-top: 1.5rem; margin-bottom: 0.5rem; }
+
+        .checkout-success-view {
+            text-align: center;
+            padding: 0.5rem 0;
+        }
+        .step-box {
+            background-color: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .step-box p {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin: 0 0 1rem 0;
+        }
+        .step-box strong {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        .highlight-text {
+            background-color: #FFFDE7;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .checkout-success-view .payment-btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        @media (max-width: 1200px) {
+            .product-page-main {
+                padding: 3rem 1.5rem;
+            }
+             .product-detail-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+            #image-column-2 {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .product-page-main {
+                padding: 2rem 1rem;
+            }
+            .product-detail-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+             #image-column-1 {
+                margin-bottom: 0;
+            }
+            .product-info-column h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="search-overlay" id="search-overlay">
+        <button class="search-close-btn" id="search-close-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="search-container">
+            <form id="search-form">
+                <input type="text" id="search-input" class="search-input" placeholder="¿Qué estás buscando? (ej. Parka, Chaleco...)">
+                <button type="submit" class="search-submit-btn">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+    <nav class="main-nav" id="main-nav">
+        <div class="nav-header">
+            <button class="nav-close-btn" id="nav-close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                Cerrar
+            </button>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html#new-arrivals">Novedades</a></li>
+            <li class="has-submenu">
+                <a href="#">Chaquetas y Rompevientos</a>
+                <ul class="nav-submenu">
+                    <li><a href="product.html?id=chaquetas-impermeables">Chaquetas Impermeables</a></li>
+                    <li><a href="product.html?id=rompevientos-impermeable">Rompevientos Impermeable</a></li>
+                    <li><a href="product.html?id=rompevientos-bicolor">Rompevientos Bicolor</a></li>
+                    <li><a href="product.html?id=rompevientos-cargo">Rompevientos Cargo</a></li>
+                    <li><a href="product.html?id=chaqueta-ovejera-encanto">Chaqueta Ovejera Encanto</a></li>
+                    <li><a href="product.html?id=chaqueta-terciopelo">Chaqueta de Terciopelo</a></li>
+                    <li><a href="product.html?id=chaqueta-vaquita">Chaqueta Vaquita</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Chalecos y Parkas</a>
+                <ul class="nav-submenu">
+                    <li><a href="product.html?id=chalecos-impermeables">Chalecos Impermeables</a></li>
+                    <li><a href="product.html?id=chalecos-cuerina">Chalecos de Cuerina</a></li>
+                    <li><a href="product.html?id=parka-corta-doble-faz">Parka Corta Doble Faz</a></li>
+                    <li><a href="product.html?id=parkas-importadas">Parkas Importadas</a></li>
+                    <li><a href="product.html?id=parka-corta">Parka Corta</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Bompers y Cazadoras</a>
+                <ul class="nav-submenu">
+                    <li><a href="product.html?id=bomper-con-capucha">Bomper con Capucha</a></li>
+                    <li><a href="product.html?id=bomper">Bomper</a></li>
+                    <li><a href="product.html?id=cazadora">Cazadora</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">Prendas de Tela</a>
+                <ul class="nav-submenu">
+                     <li><a href="product.html?id=buzos-lana">Buzos de Lana</a></li>
+                     <li><a href="product.html?id=peluche">Peluche</a></li>
+                </ul>
+            </li>
+            <li><a href="index.html#category-showcase">Colecciones Especiales</a></li>
+            <li><a href="index.html#nuestra-marca">La Marca Palo de Rosa</a></li>
+        </ul>
+    </nav>
+
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3 class="cart-title">Mi Carrito</h3>
+            <button class="cart-close-btn" id="cart-close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="cart-items-container" id="cart-items-container">
+            <p class="cart-empty-msg">Tu carrito está vacío.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-subtotal">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal-price">$0</span>
+            </div>
+            <button class="btn-checkout" id="btn-checkout">Finalizar Compra</button>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+
+    <div class="checkout-modal" id="checkout-modal">
+        <div class="checkout-modal-content">
+            <button class="checkout-close-btn" id="checkout-close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h2 class="checkout-title" id="checkout-title-main">Completa tu pedido</h2>
+            
+            <div class="checkout-form" id="checkout-form-view">
+                <label for="customer-name">Nombre Completo:</label>
+                <input type="text" id="customer-name" placeholder="Ej: Daniela Giraldo">
+                
+                <label for="customer-phone">Número de WhatsApp:</label>
+                <input type="tel" id="customer-phone" placeholder="Ej: 3213946028">
+
+                <label for="shipping-address">Dirección de Envío Completa:</label>
+                <input type="text" id="shipping-address" placeholder="Ej: Carrera 10 #20-30, Apto 501, Bogotá">
+                
+                <p class="address-error-msg" id="address-error">Por favor, completa todos los campos.</p>
+
+                <div class="payment-options">
+                    <button class="payment-btn" data-method="Nequi">Pagar con Nequi</button>
+                    <button class="payment-btn" data-method="PSE">Pagar con PSE</button>
+                    <button class="payment-btn" data-method="Daviplata">Pagar con Daviplata</button>
+                    <button class="payment-btn" data-method="Contraentrega">Pagar Contraentrega</button>
+                </div>
+            </div>
+
+            <div class="checkout-success-view" id="checkout-success-view" style="display: none;">
+                <div id="checkout-step-1" class="step-box">
+                    <p><strong>Paso 1 de 2:</strong><br>Copia el resumen de tu pedido para tenerlo listo.</p>
+                    <button id="copy-order-btn" class="payment-btn">Copiar Resumen del Pedido</button>
+                </div>
+                <div id="checkout-step-2" class="step-box" style="display: none;">
+                     <p><strong>Paso 2 de 2:</strong><br>¡Texto copiado! Para finalizar, <span class="highlight-text">debes pegar el texto en el chat</span> de WhatsApp y enviarlo.</p>
+                    <a href="https://wa.me/573213946028" target="_blank" id="open-whatsapp-btn" class="payment-btn">Abrir WhatsApp para Confirmar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="terms-modal" id="terms-modal">
+        <div class="terms-modal-content">
+            <button class="terms-close-btn" id="terms-close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h2 class="terms-title">Términos y Condiciones</h2>
+            <div class="terms-text-container">
+                <p><strong>Última actualización:</strong> 27 de Julio, 2025</p>
+                <p>Bienvenido a Palo de Rosa. Al realizar un pedido a través de nuestro sitio web o canal de WhatsApp, aceptas los siguientes términos y condiciones.</p>
+                <h4>1. Pedidos y Pagos</h4>
+                <p>Todos los pedidos se gestionan a través de WhatsApp. Te contactaremos para confirmar los detalles, el total y coordinar el pago. Aceptamos Nequi, PSE, Daviplata y pago contraentrega (sujeto a cobertura).</p>
+                <h4>2. Envíos</h4>
+                <p>Realizamos envíos a nivel nacional en Colombia. El costo y tiempo de entrega varían según la ubicación y serán comunicados durante la confirmación del pedido. No nos hacemos responsables por retrasos causados por la empresa transportadora.</p>
+                <h4>3. Devoluciones y Cambios</h4>
+                <p>Solo se aceptan cambios por defectos de fábrica reportados dentro de los 3 días posteriores a la recepción del producto. La prenda no debe haber sido usada y debe conservar sus etiquetas originales. No se realizan devoluciones de dinero. Para iniciar un proceso de cambio, por favor contáctanos por WhatsApp.</p>
+                <h4>4. Productos</h4>
+                <p>Los colores de las prendas pueden variar ligeramente debido a la iluminación de las fotografías y la calibración de las pantallas. Las descripciones de los productos buscan ser lo más precisas posible.</p>
+                <h4>5. Privacidad</h4>
+                <p>Tus datos personales, como nombre y dirección, se utilizarán únicamente para procesar y enviar tu pedido. No compartiremos tu información con terceros.</p>
+            </div>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="header-icon-btn" id="menu-toggle" aria-label="Abrir menú">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
+                    <span>Menú</span>
+                </button>
+                <a href="#" class="header-icon-btn" id="search-open-btn" aria-label="Buscar productos">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <span>Buscar</span>
+                </a>
+            </div>
+            <div class="header-center">
+                <a href="index.html#home" class="logo-link">
+                    <h1>Palo de Rosa</h1>
+                    <img src="logo.png" alt="Logo Palo de Rosa" class="header-logo-img" onerror="this.style.display='none'">
+                </a>
+            </div>
+            <div class="header-right">
+                <a href="https://wa.me/573213946028" target="_blank" class="header-action-link">Contáctenos</a>
+                <a href="#" class="header-icon-btn icon-only" aria-label="Ver lista de deseos">
+                     <svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+                </a>
+                <a href="#" class="header-icon-btn icon-only" id="cart-toggle" aria-label="Ver carrito de compras">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18"></path><path d="M16 10a4 4 0 01-8 0"></path></svg>
+                    <span class="cart-item-count" id="cart-item-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="product-page-main">
+        
+        <a href="index.html" class="btn-back">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Volver a la Tienda</span>
+        </a>
+
+        <div class="product-detail-container" id="product-detail">
+            <div class="product-image-container" id="image-column-1"></div>
+            <div class="product-image-container" id="image-column-2"></div>
+            
+            <div class="product-info-column">
+                <h1 id="product-name">Cargando producto...</h1>
+                
+                <div class="price-container">
+                    <p class="product-page-price price-glow" id="product-price-unit"></p>
+                    <p class="product-page-price-wholesale" id="product-price-wholesale"></p>
+                </div>
+                
+                <div class="product-description" id="product-description">
+                </div>
+
+                <div class="color-selector" id="color-selector-container">
+                    <h4 id="color-title">Colores</h4>
+                    <div class="color-swatches" id="color-swatches">
+                    </div>
+                </div>
+
+                <button class="add-to-cart-btn-page" id="add-to-cart-btn">Añadir al Carrito</button>
+
+                <div class="product-accordion">
+                    <div class="accordion-item">
+                        <button class="accordion-header">Sostenibilidad</button>
+                        <div class="accordion-content">
+                            <p>Nos comprometemos a utilizar materiales de alta calidad y procesos de producción responsables para minimizar nuestro impacto ambiental.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">Cuidado del Producto</button>
+                        <div class="accordion-content">
+                            <p>Para mantener la calidad de tu prenda, recomendamos lavar a mano o en ciclo delicado con agua fría. No usar blanqueador. Secar a la sombra.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Ayuda</h4>
+                <ul>
+                    <li><a href="https://wa.me/573213946028" target="_blank">Preguntas Frecuentes</a></li>
+                    <li><a href="https://wa.me/573213946028" target="_blank">Envíos y Devoluciones</a></li>
+                    <li><a href="#" id="terms-link">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>La Marca</h4>
+                <ul>
+                    <li><a href="index.html#nuestra-marca">Nuestra Historia</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <ul>
+                    <li><a href="tel:+573213946028" class="footer-contact-link">(57) 321 3946028</a></li>
+                    <li>Calle 59c sur 88c 56, Almacén</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Palo de Rosa by Daniela Giraldo. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    
+    <script src="script.js" defer></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const termsModal = document.getElementById('terms-modal');
+        const termsLink = document.getElementById('terms-link');
+        const termsCloseBtn = document.getElementById('terms-close-btn');
+
+        if (termsLink && termsModal && termsCloseBtn) {
+            const openTermsModal = (e) => {
+                e.preventDefault();
+                termsModal.classList.add('visible');
+            };
+            const closeTermsModal = () => {
+                termsModal.classList.remove('visible');
+            };
+            termsLink.addEventListener('click', openTermsModal);
+            termsCloseBtn.addEventListener('click', closeTermsModal);
+            termsModal.addEventListener('click', (e) => {
+                if (e.target === termsModal) {
+                    closeTermsModal();
+                }
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && termsModal.classList.contains('visible')) {
+                    closeTermsModal();
+                }
+            });
+        }
+    });
+    </script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const productsData = {
+            'buzos-lana': {
+                name: 'Buzos de Lana',
+                description: 'Buzo de lana con diseño clásico de punto trenzado. Confeccionado con materiales suaves y cálidos, es la prenda perfecta para los días fríos. Su cuello redondo y ajuste cómodo lo hacen versátil para combinar con cualquier look. Una pieza esencial que aporta textura y estilo a tu armario.',
+                colors: {
+                    'rosa': { hex: '#E6A4B4', unit_price: 85000, wholesale_price: 75000, images: ['WhatsApp Video 2025-07-25 at 4.01.05 PM.mp4', 'WhatsApp Image 2025-07-25 at 4.01.05 PM.jpeg'] },
+                    'beige': { hex: '#F3EEEA', unit_price: 85000, wholesale_price: 75000, images: ['WhatsApp Video 2025-07-25 at 4.01.05 PM.mp4', 'WhatsApp Image 2025-07-25 at 4.01.05 PM.jpeg'] },
+                    'azul_claro': { hex: '#A0C4E2', unit_price: 85000, wholesale_price: 75000, images: ['WhatsApp Video 2025-07-25 at 4.01.05 PM.mp4', 'WhatsApp Image 2025-07-25 at 4.01.05 PM.jpeg'] },
+                    'camel': { hex: '#C19A6B', unit_price: 85000, wholesale_price: 75000, images: ['WhatsApp Video 2025-07-25 at 4.01.05 PM.mp4', 'WhatsApp Image 2025-07-25 at 4.01.05 PM.jpeg'] },
+                    'fucsia': { hex: '#D83F87', unit_price: 85000, wholesale_price: 75000, images: ['WhatsApp Video 2025-07-25 at 4.01.05 PM.mp4', 'WhatsApp Image 2025-07-25 at 4.01.05 PM.jpeg'] },
+                    'negro': { hex: '#000000', unit_price: 85000, wholesale_price: 75000, images: ['WhatsApp Video 2025-07-25 at 4.01.05 PM.mp4', 'WhatsApp Image 2025-07-25 at 4.01.05 PM.jpeg'] }
+                }
+            },
+            'chaquetas-impermeables': {
+                name: 'Chaquetas Impermeables',
+                description: 'Chaqueta impermeable, ideal para climas fríos. Su exterior es impermeable y resistente al viento, mientras su interior es acolchado y térmico, lo que garantiza abrigo incluso al mojarse, con capucha ajustable, bolsillos y cierre frontal.',
+                colors: {
+                    'verde': { hex: '#cad3c3', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 145927.png', 'Captura de pantalla 2025-07-26 170949.png'] },
+                    'morado_claro': { hex: '#B6A4C7', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 171612.png', 'Captura de pantalla 2025-07-26 171626.png'] },
+                    'rosado': { hex: '#FFB6C1', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 171654.png', 'Captura de pantalla 2025-07-26 171707.png'] },
+                    'rosado_claro': { hex: '#FFD1DC', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 171727.png', 'Captura de pantalla 2025-07-26 171739.png'] }
+                }
+            },
+            'rompevientos-impermeable': {
+                name: 'Rompevientos Impermeable',
+                description: 'Rompevientos impermeable unicolor con capucha ajustable y bolsillos laterales. Diseño oversize cómodo y versátil, fabricado en tela hidrófoba que repele el agua. Perfecto para días lluviosos o ventosos como capa protectora. Material ligero y resistente que mantiene seco sin sacrificar movilidad. Ideal para looks deportivos y casuales. Disponible en varios colores.',
+                colors: {
+                    'negro': { hex: '#000000', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 150211.png', 'Captura de pantalla 2025-07-26 194212.png'] },
+                    'lila_gris': { hex: '#c1c2d3', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 194308.png', 'Captura de pantalla 2025-07-26 194321.png'] },
+                    'rosa_palido': { hex: '#f1e8e9', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 194345.png', 'Captura de pantalla 2025-07-26 194410.png'] },
+                    'marron': { hex: '#6e4f4b', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 194439.png', 'Captura de pantalla 2025-07-26 194453.png'] }
+                }
+            },
+            'rompevientos-bicolor': {
+                name: 'Rompevientos Bicolor',
+                description: 'Chaqueta deportiva con capucha y diseño bicolor en bloques. Fabricada en poliéster hidrófobo con relleno de algodón sintético para mayor calidez. Cierre frontal completo y ajuste cómodo. Perfecta para actividades al aire libre y looks casuales urbanos.',
+                colors: {
+                    'blanco': { hex: '#FFFFFF', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 195846.png', 'Captura de pantalla 2025-07-26 195938.png'] },
+                    'verde_opaco': { hex: '#5E7164', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 195958.png', 'Captura de pantalla 2025-07-26 195958.png'] },
+                    'gris_azulado': { hex: '#8D99AE', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 200029.png', 'Captura de pantalla 2025-07-26 200029.png'] },
+                    'negro': { hex: '#000000', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 200049.png', 'Captura de pantalla 2025-07-26 200049.png'] }
+                }
+            },
+            'rompevientos-cargo': {
+                name: 'Rompevientos Cargo',
+                description: 'Chaqueta con capucha y múltiples bolsillos. Diseño militar urbano con detalles funcionales y cierre frontal. Material resistente ideal para looks streetwear y actividades al aire libre. Estilo oversized con cordones ajustables en capucha. Disponible en varios colores.',
+                colors: {
+                    'beige': { hex: '#D2B48C', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 201200.png'] },
+                    'negro': { hex: '#000000', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 201358.png'] },
+                    'blanco': { hex: '#FFFFFF', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 201411.png'] },
+                    'verde': { hex: '#556B2F', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 201430.png'] }
+                }
+            },
+            'chalecos-impermeables': {
+                name: 'Chalecos Impermeables',
+                description: 'Chaleco impermeable acolchado con cuello alto y cierre frontal. Diseño sin mangas y con caucho ajustable. Material resistente al agua con relleno térmico para mayor calidez. Perfecto para looks casuales y actividades al aire libre. Disponible en varios colores.',
+                colors: {
+                    'negro': { hex: '#000000', unit_price: 35000, wholesale_price: 30000, images: ['Captura de pantalla 2025-07-26 205050.png', 'Captura de pantalla 2025-07-26 205106.png'] },
+                    'blanco': { hex: '#FFFFFF', unit_price: 35000, wholesale_price: 30000, images: ['Captura de pantalla 2025-07-26 205122.png', 'Captura de pantalla 2025-07-26 205137.png'] }
+                }
+            },
+            'chalecos-cuerina': {
+                name: 'Chaleco de Cuerina',
+                description: 'Chaleco de cuerina con forro de peluche y cierre frontal. Diseño versátil sin mangas, perfecto para looks en capas. Material sintético que brinda calidez y estilo. Disponible en varios colores.',
+                colors: {
+                    'marron': { hex: '#a57c68', unit_price: 55000, wholesale_price: 45000, images: ['Captura de pantalla 2025-07-26 205737.png', 'Captura de pantalla 2025-07-26 150541.png'] },
+                    'beige_claro': { hex: '#f0e1d1', unit_price: 55000, wholesale_price: 45000, images: ['Captura de pantalla 2025-07-26 205651.png', 'Captura de pantalla 2025-07-26 205712.png'] }
+                }
+            },
+            'parka-corta-doble-faz': {
+                name: 'Parka Corta Doble Faz',
+                description: 'Chaqueta doble faz, una de sus caras es impermeable, mientras que por su otra cara es totalmente de peluche, en ambos lados cuenta con bolsillos y capucha removible. Ideal para frío y mayor versatilidad.',
+                colors: {
+                    'negro': { hex: '#000000', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 210638.png', 'Captura de pantalla 2025-07-26 210659.png'] },
+                    'beige': { hex: '#f0e1d1', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 210728.png', 'Captura de pantalla 2025-07-26 210744.png'] },
+                    'marron': { hex: '#a57c68', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 210816.png', 'Captura de pantalla 2025-07-26 210833.png'] },
+                    'cafe_oscuro': { hex: '#5D4037', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-26 150610.png', 'Captura de pantalla 2025-07-26 225308.png'] }
+                }
+            },
+            'parkas-importadas': {
+                name: 'Parkas Importadas',
+                description: 'Parka larga acolchada con capucha y cuello de peluche sintético. Diseño oversized con cinturón ajustable y múltiples bolsillos. Relleno térmico que proporciona máxima protección contra el frío. Perfecta para invierno con estilo urbano y elegante. Disponible en varios colores.',
+                colors: {
+                    'verde_menta': { hex: '#A2E4D2', unit_price: 115000, wholesale_price: 105000, images: ['Captura de pantalla 2025-07-26 234234.png'] },
+                    'rosa_palido': { hex: '#F0D9D1', unit_price: 115000, wholesale_price: 105000, images: ['Captura de pantalla 2025-07-26 150646.png', 'Captura de pantalla 2025-07-26 234107.png'] },
+                    'negro': { hex: '#000000', unit_price: 115000, wholesale_price: 105000, images: ['Captura de pantalla 2025-07-26 234318.png'] },
+                    'marron_topo': { hex: '#6D5F54', unit_price: 115000, wholesale_price: 105000, images: ['Captura de pantalla 2025-07-26 234355.png'] },
+                    'azul_claro': { hex: '#89CFF0', unit_price: 115000, wholesale_price: 105000, images: ['Captura de pantalla 2025-07-26 234425.png'] }
+                }
+            },
+            'parka-corta': {
+                name: 'Parka Corta',
+                description: 'Chaqueta puffer corta con capucha de peluche y puños tejidos. Diseño bomber acolchado con cierre frontal y ajuste elástico en cintura. Relleno térmico que brinda calidez y comodidad. Perfecta para looks casuales de invierno con estilo urbano. Disponible en varios colores.',
+                colors: {
+                    'blanco': { hex: '#FFFFFF', unit_price: 115000, wholesale_price: 105000, images: ['Captura de pantalla 2025-07-27 110143.png'] },
+                    'marron': { hex: '#a57c68', unit_price: 115000, wholesale_price: 105000, images: ['Captura de pantalla 2025-07-27 110206.png'] },
+                    'negro': { hex: '#000000', unit_price: 115000, wholesale_price: 105000, images: ['Captura de pantalla 2025-07-27 110224.png'] },
+                    'beige': { hex: '#f0e1d1', unit_price: 115000, wholesale_price: 105000, images: ['Captura de pantalla 2025-07-27 110238.png'] }
+                }
+            },
+            'bomper-con-capucha': {
+                name: 'Bomper con capucha',
+                description: 'Chaqueta de peluche sintético con diseño esponjoso y textura suave. Corte crop moderno con cierre frontal, mangas amplias y bolsillos prácticos. Perfecta para crear looks casuales y cómodos en climas frescos. Su material mullido y ligero aporta calidez sin peso adicional. Disponible en varios colores.',
+                colors: {
+                    'blanco': { hex: '#FFFFFF', unit_price: 55000, wholesale_price: 48000, images: ['Captura de pantalla 2025-07-27 110723.png', 'Captura de pantalla 2025-07-27 110856.png'] },
+                    'rosa_palido': { hex: '#87CEFA', unit_price: 55000, wholesale_price: 48000, images: ['Captura de pantalla 2025-07-27 110922.png', 'Captura de pantalla 2025-07-27 110944.png'] },
+                    'negro': { hex: '#000000', unit_price: 55000, wholesale_price: 48000, images: ['Captura de pantalla 2025-07-27 111016.png', 'Captura de pantalla 2025-07-27 111034.png'] }
+                }
+            },
+            'bomper': {
+                name: 'Bomper',
+                description: 'Bomber metalizada con acabado brillante y cierre frontal. Diseño oversized con puños y cintura elásticos. Material sintético con efecto espejo que refleja la luz. Perfecta para looks futuristas y urbanos con mucha personalidad. Disponible en varios colores.',
+                colors: {
+                    'cobre': { hex: '#c88a81', unit_price: 58000, wholesale_price: 50000, images: ['Captura de pantalla 2025-07-27 111607.png', 'Captura de pantalla 2025-07-27 111632.png'] },
+                    'plata': { hex: '#d1c4c0', unit_price: 58000, wholesale_price: 50000, images: ['Captura de pantalla 2025-07-27 111654.png', 'Captura de pantalla 2025-07-27 111712.png'] },
+                    'cafe_oscuro': { hex: '#413735', unit_price: 58000, wholesale_price: 50000, images: ['Captura de pantalla 2025-07-27 111734.png'] }
+                }
+            },
+            'chaqueta-ovejera-encanto': {
+                name: 'Chaqueta ovejera encanto',
+                description: 'Chaqueta puffer cropped con capucha de peluche, con diseño moderno y juvenil. Fabricada en material acolchado resistente al viento, perfecta para climas fríos y para lograr un look trendy y cómoda. Cuenta con cierre frontal completo y ajuste elástico en la cintura que realza la silueta. La capucha desmontable con forro de peluche sintético añade calidez y estilo. Ideal para combinar con jeans y crear outfits casuales con personalidad. Disponible en varios colores.',
+                colors: {
+                    'lila': { hex: '#e1dff0', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-27 112723.png', 'Captura de pantalla 2025-07-27 112743.png'] },
+                    'crema': { hex: '#f5e9e2', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-27 112802.png', 'Captura de pantalla 2025-07-27 112838.png'] },
+                    'cafe': { hex: '#8a6f68', unit_price: 115000, wholesale_price: 100000, images: ['Captura de pantalla 2025-07-27 004331.png', 'Captura de pantalla 2025-07-27 112907.png'] }
+                }
+            },
+            'peluche': {
+                name: 'Peluche',
+                description: 'Chaqueta de peluche sintético con diseño esponjoso y textura suave. Corte crop moderno con cierre frontal, mangas amplias y bolsillos prácticos. Perfecta para crear looks casuales y cómodos en climas frescos. Su material mullido y ligero aporta calidez sin peso adicional. Disponible en varios colores.',
+                colors: {
+                    'blanco': { hex: '#FFFFFF', unit_price: 85000, wholesale_price: 70000, images: ['Captura de pantalla 2025-07-27 004407.png', 'Captura de pantalla 2025-07-27 113420.png'] },
+                    'rosa_palido': { hex: '#fbeee5', unit_price: 85000, wholesale_price: 70000, images: ['Captura de pantalla 2025-07-27 113441.png', 'Captura de pantalla 2025-07-27 113513.png'] },
+                    'negro': { hex: '#000000', unit_price: 85000, wholesale_price: 70000, images: ['Captura de pantalla 2025-07-27 113534.png', 'Captura de pantalla 2025-07-27 113636.png'] }
+                }
+            },
+            'cazadora': {
+                name: 'Cazadora',
+                description: 'Cazadora de cuerina con forro de peluche y cuello alto. Diseño aviador moderno con cierre frontal y bolsillos prácticos. Material sintético resistente que combina estilo y calidez. Perfecta para looks casuales con actitud. Disponible en varios colores.',
+                colors: {
+                    'gris_topo': { hex: '#a9a29a', unit_price: 95000, wholesale_price: 80000, images: ['Captura de pantalla 2025-07-27 004427.png', 'Captura de pantalla 2025-07-27 114059.png'] },
+                    'cafe': { hex: '#9e8a75', unit_price: 95000, wholesale_price: 80000, images: ['Captura de pantalla 2025-07-27 114130.png', 'Captura de pantalla 2025-07-27 114202.png'] },
+                    'rosa_claro': { hex: '#e7e0e1', unit_price: 95000, wholesale_price: 80000, images: ['Captura de pantalla 2025-07-27 114230.png', 'Captura de pantalla 2025-07-27 114259.png'] }
+                }
+            },
+            'chaqueta-terciopelo': {
+                name: 'Chaqueta de Terciopelo',
+                description: 'Chaqueta crop de terciopelo con detalles de peluche en cuello y puños. Diseño moderno y elegante, perfecta para looks casuales o urbanos. Incluye bolsillos prácticos y forro abrigador. Su corte versátil la convierte en una pieza clave para cualquier outfit. Disponible en varios colores.',
+                colors: {
+                    'blanco': { hex: '#FFFFFF', unit_price: 100000, wholesale_price: 87000, images: ['Captura de pantalla 2025-07-27 114830.png', 'Captura de pantalla 2025-07-27 114919.png'] },
+                    'beige': { hex: '#e3d1b5', unit_price: 100000, wholesale_price: 87000, images: ['Captura de pantalla 2025-07-27 120151.png', 'Captura de pantalla 2025-07-27 120214.png'] },
+                    'negro': { hex: '#000000', unit_price: 100000, wholesale_price: 87000, images: ['Captura de pantalla 2025-07-27 120237.png', 'Captura de pantalla 2025-07-27 120330.png'] }
+                }
+            },
+            'chaqueta-vaquita': {
+                name: 'Chaqueta Vaquita',
+                description: 'Chaqueta estilo vaquita, con diseño estampado moderno y original. Fabricada en terciopelo, perfecta para climas frescos y para darle un toque único a cualquier outfit. No cuenta con bolsillos. Disponible en varios colores.',
+                unit_price: 100000,
+                wholesale_price: 90000,
+                images: ['Captura de pantalla 2025-07-27 004104.png', 'Captura de pantalla 2025-07-27 121031.png']
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id') || 'chaquetas-impermeables';
+        const productData = productsData[productId];
+
+        const imageCol1 = document.getElementById('image-column-1');
+        const imageCol2 = document.getElementById('image-column-2');
+        const productNameEl = document.getElementById('product-name');
+        const productDescEl = document.getElementById('product-description');
+        const priceUnitEl = document.getElementById('product-price-unit');
+        const priceWholesaleEl = document.getElementById('product-price-wholesale');
+        const colorSelectorContainer = document.getElementById('color-selector-container');
+        const colorSwatchesEl = document.getElementById('color-swatches');
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        let currentSelectedColor = '';
+        
+        const formatPrice = (price) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
+
+        function updateProductView(product, selectedColorName) {
+            currentSelectedColor = selectedColorName;
+            productNameEl.textContent = product.name;
+            productDescEl.textContent = product.description;
+            let mediaToShow = [];
+
+            if (product.colors && selectedColorName) {
+                const selectedColorData = product.colors[selectedColorName];
+                mediaToShow = selectedColorData.images;
+                priceUnitEl.textContent = `Unidad: ${formatPrice(selectedColorData.unit_price)}`;
+                priceWholesaleEl.textContent = `Por mayor (3+ unidades): ${formatPrice(selectedColorData.wholesale_price)}`;
+                priceWholesaleEl.style.display = 'block';
+                colorSelectorContainer.style.display = 'block';
+
+                const currentActive = colorSwatchesEl.querySelector('.active');
+                if(currentActive) currentActive.classList.remove('active');
+                const newActive = colorSwatchesEl.querySelector(`[data-color="${selectedColorName}"]`);
+                if(newActive) newActive.classList.add('active');
+
+            } else { 
+                mediaToShow = product.images;
+                priceUnitEl.textContent = `Unidad: ${formatPrice(product.unit_price)}`;
+                if (product.wholesale_price) {
+                    priceWholesaleEl.textContent = `Por mayor (3+ unidades): ${formatPrice(product.wholesale_price)}`;
+                    priceWholesaleEl.style.display = 'block';
+                } else {
+                    priceWholesaleEl.style.display = 'none';
+                }
+                colorSelectorContainer.style.display = 'none';
+            }
+
+            const renderMedia = (container, mediaFile) => {
+                if (!container) return;
+                if (!mediaFile) {
+                    container.innerHTML = '';
+                    return;
+                }
+                if (mediaFile.endsWith('.mp4')) {
+                    container.innerHTML = `<video src="${mediaFile}" autoplay loop muted playsinline></video>`;
+                } else {
+                    container.innerHTML = `<img src="${mediaFile}" alt="${product.name}">`;
+                }
+            };
+
+            renderMedia(imageCol1, mediaToShow[0]);
+            renderMedia(imageCol2, mediaToShow[1]);
+        }
+
+        if (productData) {
+            document.title = `${productData.name} - Palo de Rosa`;
+            
+            addToCartBtn.addEventListener('click', () => {
+                let productToAdd;
+                const baseProductId = urlParams.get('id');
+
+                const getCartImage = (images) => {
+                    if (!images || images.length === 0) return '';
+                    return images.find(url => /\.(png|jpg|jpeg|gif)$/i.test(url)) || images[0];
+                };
+                
+                const capitalize = (str) => {
+                    if (!str) return '';
+                    return str.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                };
+
+                if (productData.colors) {
+                    const colorData = productData.colors[currentSelectedColor];
+                    productToAdd = {
+                        id: `${baseProductId}-${currentSelectedColor}`,
+                        baseId: baseProductId,
+                        name: `${productData.name} (${capitalize(currentSelectedColor)})`,
+                        unit_price: colorData.unit_price,
+                        wholesale_price: colorData.wholesale_price,
+                        image: getCartImage(colorData.images)
+                    };
+                } else {
+                    productToAdd = {
+                        id: productId,
+                        baseId: baseProductId,
+                        name: productData.name,
+                        unit_price: productData.unit_price,
+                        wholesale_price: productData.wholesale_price,
+                        image: getCartImage(productData.images)
+                    };
+                }
+                
+                document.dispatchEvent(new CustomEvent('addToCart', { detail: productToAdd }));
+            });
+
+            if (productData.colors) {
+                colorSwatchesEl.innerHTML = '';
+                Object.keys(productData.colors).forEach(colorName => {
+                    const colorData = productData.colors[colorName];
+                    const swatch = document.createElement('div');
+                    swatch.className = 'swatch';
+                    swatch.style.backgroundColor = colorData.hex;
+                    swatch.dataset.color = colorName;
+                    swatch.addEventListener('click', () => updateProductView(productData, colorName));
+                    colorSwatchesEl.appendChild(swatch);
+                });
+                const firstColor = Object.keys(productData.colors)[0];
+                updateProductView(productData, firstColor);
+            } else {
+                updateProductView(productData, null);
+            }
+
+        } else {
+            document.getElementById('product-detail').innerHTML = '<h1>Producto no encontrado</h1><p>El producto que buscas no existe. <a href="index.html" class="btn-back">Volver a la tienda</a>.</p>';
+        }
+
+        document.querySelectorAll('.accordion-item').forEach(item => {
+            const header = item.querySelector('.accordion-header');
+            if (header) {
+                header.addEventListener('click', () => {
+                    item.classList.toggle('active');
+                });
+            }
+        });
+    });
+    </script>
+</body>
+</html>
