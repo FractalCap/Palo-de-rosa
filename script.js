@@ -298,13 +298,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 paymentMethod: paymentMethod
             };
 
-            const appsScriptUrl = "https://script.google.com/macros/s/AKfycbwabt8ZVx3EkD54Y_DCsyNGjuFxFPITo2lhB-X6HGi9cZLfspib7_gtAUa4JU6xRGE/exec"; 
+            const appsScriptUrl = "https://script.google.com/macros/s/AKfycbx6JHSVj1sX4S2H8c7wSWfqDnjRBPyrq5eBijT-MYsN5RdhTP3aBYy0M8HyWYkU6dU0/exec"; 
             
             fetch(appsScriptUrl, {
                 method: 'POST',
-                body: JSON.stringify(orderData),
-                headers: { 'Content-Type': 'application/json' },
-                mode: 'cors'
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
             })
             .then(response => {
                 if (!response.ok) {
@@ -314,16 +316,30 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 if (data.result === 'success') {
-                    let fullWhatsappMessage = `¡Hola Palo de Rosa! 🌸\n\nQuisiera confirmar mi pedido con ID *${orderId}*:\n\n`;
-                    fullWhatsappMessage += `*PRODUCTOS:*\n`;
+                    let fullWhatsappMessage = `¡Hola Palo de Rosa! 🌸
+
+Quisiera confirmar mi pedido con ID *${orderId}*:
+
+`;
+                    fullWhatsappMessage += `*PRODUCTOS:*
+`;
                     cart.forEach(item => {
-                        fullWhatsappMessage += `- ${item.name} (x${item.quantity}) - ${formatPrice(item.display_price)} c/u\n`;
+                        fullWhatsappMessage += `- ${item.name} (x${item.quantity}) - ${formatPrice(item.display_price)} c/u
+`;
                     });
-                    fullWhatsappMessage += `\n*SUBTOTAL: ${formatPrice(subtotal)}*\n\n`;
-                    fullWhatsappMessage += `*MI DIRECCIÓN DE ENVÍO:*\n${shippingAddress}\n\n`;
-                    fullWhatsappMessage += `*MI MÉTODO DE PAGO:* ${paymentMethod}\n\n`;
+                    fullWhatsappMessage += `
+*SUBTOTAL: ${formatPrice(subtotal)}*
+
+`;
+                    fullWhatsappMessage += `*MI DIRECCIÓN DE ENVÍO:*
+${shippingAddress}
+
+`;
+                    fullWhatsappMessage += `*MI MÉTODO DE PAGO:* ${paymentMethod}
+
+`;
                     fullWhatsappMessage += `¡Quedo atento/a, gracias!`;
-                    
+
                     checkoutTitleMain.textContent = '¡Pedido Registrado!';
                     checkoutFormView.style.display = 'none';
                     checkoutSuccessView.style.display = 'block';
@@ -340,14 +356,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             alert('Error al copiar. Por favor, intenta de nuevo.');
                         });
                     };
-                    
+
                     openWhatsAppBtn.onclick = () => {
                         setTimeout(closeCheckoutModal, 500);
                     };
-                    
+
                     cart = [];
                     updateCart();
-
                 } else {
                     throw new Error(data.message || 'El servidor devolvió un error inesperado.');
                 }
