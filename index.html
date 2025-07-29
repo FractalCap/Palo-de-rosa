@@ -126,6 +126,69 @@
             width: 100%;
             text-align: center;
         }
+
+        /* --- ESTILOS PARA LA NUEVA SECCIÓN DE VIDEOS --- */
+        .dual-video-section {
+            padding: 4rem 2rem;
+            background-color: var(--white);
+        }
+        .dual-video-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .video-container-dual {
+            position: relative;
+            width: 100%;
+            /* Se recomienda una relación de aspecto de video vertical */
+            aspect-ratio: 9 / 16; 
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .video-container-dual video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-sound-control {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+        }
+        .sound-control-btn {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: transform 0.2s;
+        }
+        .sound-control-btn:hover {
+            transform: scale(1.1);
+        }
+        .sound-control-btn .icon-sound-on { display: none; }
+        .sound-control-btn .icon-sound-off { display: block; }
+
+        .sound-control-btn.sound-active .icon-sound-on { display: block; }
+        .sound-control-btn.sound-active .icon-sound-off { display: none; }
+        
+        @media (max-width: 768px) {
+            .dual-video-grid {
+                grid-template-columns: 1fr;
+            }
+            .dual-video-section {
+                padding: 3rem 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -492,6 +555,47 @@
             </div>
         </section>
 
+        <section class="dual-video-section">
+            <h2 class="section-title searchable-content">Asi funcionan nuestros productos</h2>
+            <div class="dual-video-grid">
+                <div class="video-container-dual">
+                    <video id="dual-video-1" class="showcase-video-element" loop muted autoplay playsinline>
+                        <source src="Video de WhatsApp 2025-07-28 a las 19.03.47_a10e6561.mp4" type="video/mp4">
+                        Tu navegador no soporta la etiqueta de video.
+                    </video>
+                    <div class="video-controls">
+                        <button class="video-control-btn" aria-label="Reproducir o pausar video" data-video-target="dual-video-1">
+                            <svg class="icon-play" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            <svg class="icon-pause" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        </button>
+                    </div>
+                    <div class="video-sound-control">
+                        <button class="sound-control-btn" aria-label="Activar o desactivar sonido" data-video-target="dual-video-1">
+                            <svg class="icon-sound-off" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                            <svg class="icon-sound-on" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="video-container-dual">
+                    <video id="dual-video-2" class="showcase-video-element" loop muted autoplay playsinline>
+                        <source src="Video de WhatsApp 2025-07-28 a las 19.03.58_c4b5cbff.mp4" type="video/mp4">
+                        Tu navegador no soporta la etiqueta de video.
+                    </video>
+                    <div class="video-controls">
+                        <button class="video-control-btn" aria-label="Reproducir o pausar video" data-video-target="dual-video-2">
+                            <svg class="icon-play" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            <svg class="icon-pause" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        </button>
+                    </div>
+                    <div class="video-sound-control">
+                        <button class="sound-control-btn" aria-label="Activar o desactivar sonido" data-video-target="dual-video-2">
+                            <svg class="icon-sound-off" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                            <svg class="icon-sound-on" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
         <section class="video-section">
             <h2 class="section-title searchable-content">Hecho para Cualquier Situacion</h2>
             <div class="video-container">
@@ -501,7 +605,7 @@
                 </video>
                 <div class="video-overlay"></div>
                 <div class="video-controls">
-                    <button id="play-pause-btn" class="video-control-btn" aria-label="Reproducir o pausar video">
+                    <button class="video-control-btn" aria-label="Reproducir o pausar video" data-video-target="showcase-video">
                         <svg class="icon-play" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                         <svg class="icon-pause" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                     </button>
@@ -585,6 +689,7 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // --- LÓGICA MODAL DE TÉRMINOS Y CONDICIONES ---
         const termsModal = document.getElementById('terms-modal');
         const termsLink = document.getElementById('terms-link');
         const termsCloseBtn = document.getElementById('terms-close-btn');
@@ -601,23 +706,59 @@
         if (termsLink) {
             termsLink.addEventListener('click', openTermsModal);
         }
-
         if (termsCloseBtn) {
             termsCloseBtn.addEventListener('click', closeTermsModal);
         }
-
         if (termsModal) {
             termsModal.addEventListener('click', (e) => {
-                if (e.target === termsModal) {
-                    closeTermsModal();
-                }
+                if (e.target === termsModal) closeTermsModal();
             });
         }
-        
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && termsModal.classList.contains('visible')) {
                 closeTermsModal();
             }
+        });
+
+        // --- LÓGICA PARA TODOS LOS CONTROLES DE VIDEO ---
+        
+        // 1. Control de Pausa y Play
+        const playPauseBtns = document.querySelectorAll('.video-control-btn');
+        playPauseBtns.forEach(btn => {
+            const videoId = btn.dataset.videoTarget;
+            const video = document.getElementById(videoId);
+            if (!video) return;
+
+            // Sincronizar el botón con el estado inicial del video
+            if (!video.paused) {
+                btn.classList.add('playing');
+            }
+
+            btn.addEventListener('click', () => {
+                if (video.paused) {
+                    video.play();
+                    btn.classList.add('playing');
+                } else {
+                    video.pause();
+                    btn.classList.remove('playing');
+                }
+            });
+        });
+
+        // 2. Control de Sonido (Mute/Unmute)
+        const soundBtns = document.querySelectorAll('.sound-control-btn');
+        soundBtns.forEach(btn => {
+            const videoId = btn.dataset.videoTarget;
+            const video = document.getElementById(videoId);
+            if (!video) return;
+            
+            // Sincronizar botón con estado inicial
+            btn.classList.toggle('sound-active', !video.muted);
+
+            btn.addEventListener('click', () => {
+                video.muted = !video.muted;
+                btn.classList.toggle('sound-active', !video.muted);
+            });
         });
     });
     </script>
